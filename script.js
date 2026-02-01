@@ -1,333 +1,241 @@
-// ===== Mobile Navigation Toggle =====
-const hamburger = document.getElementById('hamburger');
-const navMenu = document.getElementById('navMenu');
-const navLinks = document.querySelectorAll('.nav-link');
+// Initialize GSAP
+gsap.registerPlugin(ScrollTrigger);
 
-hamburger.addEventListener('click', () => {
-    navMenu.classList.toggle('active');
-    hamburger.classList.toggle('active');
-});
-
-// Close mobile menu when clicking on a link
-navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-        navMenu.classList.remove('active');
-        hamburger.classList.remove('active');
+// Reveal animations
+gsap.utils.toArray('.reveal-text').forEach((element, i) => {
+    gsap.to(element, {
+        scrollTrigger: {
+            trigger: element,
+            start: "top 85%",
+            toggleActions: "play none none reverse"
+        },
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: "power3.out",
+        delay: element.style.animationDelay ? parseFloat(element.style.animationDelay) : 0
     });
 });
 
-// ===== Navbar Scroll Effect =====
-const navbar = document.getElementById('navbar');
+// Navbar scroll effect
 let lastScroll = 0;
-
 window.addEventListener('scroll', () => {
+    const navbar = document.getElementById('navbar');
     const currentScroll = window.pageYOffset;
     
-    if (currentScroll > 50) {
-        navbar.classList.add('scrolled');
+    if (currentScroll > 100) {
+        navbar.classList.add('glass-strong');
     } else {
-        navbar.classList.remove('scrolled');
+        navbar.classList.remove('glass-strong');
     }
     
     lastScroll = currentScroll;
 });
 
-// ===== Smooth Scrolling for Navigation Links =====
-navLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const targetId = link.getAttribute('href');
-        const targetSection = document.querySelector(targetId);
-        
-        if (targetSection) {
-            const offsetTop = targetSection.offsetTop - 70;
-            window.scrollTo({
-                top: offsetTop,
-                behavior: 'smooth'
-            });
-        }
-    });
-});
-
-// ===== Counter Animation =====
-const counters = document.querySelectorAll('.counter');
-let counterAnimated = false;
-
-const animateCounters = () => {
-    counters.forEach(counter => {
-        const target = parseInt(counter.getAttribute('data-target'));
-        const duration = 2000;
-        const increment = target / (duration / 16);
-        let current = 0;
-        
-        const updateCounter = () => {
-            current += increment;
-            if (current < target) {
-                counter.textContent = Math.floor(current);
-                requestAnimationFrame(updateCounter);
-            } else {
-                counter.textContent = target;
-            }
-        };
-        
-        updateCounter();
-    });
-};
-
-// ===== Intersection Observer for Animations =====
-const observerOptions = {
-    threshold: 0.2,
-    rootMargin: '0px'
-};
-
-// Animate elements when they come into view
-const animateOnScroll = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-            
-            // Animate counters when hero section is visible
-            if (entry.target.classList.contains('hero-stats') && !counterAnimated) {
-                animateCounters();
-                counterAnimated = true;
-            }
-        }
-    });
-}, observerOptions);
-
-// Observe feature cards
-const featureCards = document.querySelectorAll('.feature-card');
-featureCards.forEach((card, index) => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(30px)';
-    card.style.transition = `all 0.6s ease-out ${index * 0.1}s`;
-    animateOnScroll.observe(card);
-});
-
-// Observe service items
-const serviceItems = document.querySelectorAll('.service-item');
-serviceItems.forEach((item, index) => {
-    item.style.opacity = '0';
-    item.style.transform = 'translateY(30px)';
-    item.style.transition = `all 0.6s ease-out ${index * 0.2}s`;
-    animateOnScroll.observe(item);
-});
-
-// Observe hero stats for counter animation
-const heroStats = document.querySelector('.hero-stats');
-if (heroStats) {
-    animateOnScroll.observe(heroStats);
+// Mobile menu toggle
+function toggleMenu() {
+    const menu = document.getElementById('mobile-menu');
+    menu.classList.toggle('translate-x-full');
 }
 
-// ===== Active Navigation Link Highlighting =====
-window.addEventListener('scroll', () => {
-    const sections = document.querySelectorAll('section[id]');
-    const scrollY = window.pageYOffset;
-    
-    sections.forEach(section => {
-        const sectionHeight = section.offsetHeight;
-        const sectionTop = section.offsetTop - 100;
-        const sectionId = section.getAttribute('id');
-        const navLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
-        
-        if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-            navLinks.forEach(link => link.classList.remove('active'));
-            if (navLink) {
-                navLink.classList.add('active');
-            }
-        }
-    });
-});
-
-// ===== Contact Form Handling =====
-const contactForm = document.getElementById('contactForm');
-
-contactForm.addEventListener('submit', (e) => {
+// Contact Form Handling
+function handleSubmit(e) {
     e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    const successMsg = document.getElementById('successMessage');
+    const originalContent = btn.innerHTML;
     
-    // Get form values
-    const formData = {
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value,
-        company: document.getElementById('company').value,
-        service: document.getElementById('service').value,
-        message: document.getElementById('message').value
-    };
+    // Loading state
+    btn.innerHTML = '<svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+    btn.disabled = true;
     
-    // Show success message
-    showNotification('Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.', 'success');
-    
-    // Reset form
-    contactForm.reset();
-    
-    // Log form data (for demonstration)
-    console.log('Form submitted:', formData);
-});
-
-// ===== Notification System =====
-function showNotification(message, type = 'success') {
-    // Remove any existing notifications
-    const existingNotification = document.querySelector('.notification');
-    if (existingNotification) {
-        existingNotification.remove();
-    }
-    
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    notification.textContent = message;
-    
-    // Add styles
-    Object.assign(notification.style, {
-        position: 'fixed',
-        top: '100px',
-        right: '20px',
-        background: type === 'success' ? '#10b981' : '#ef4444',
-        color: 'white',
-        padding: '1rem 1.5rem',
-        borderRadius: '8px',
-        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-        zIndex: '9999',
-        animation: 'slideIn 0.3s ease-out',
-        maxWidth: '400px'
-    });
-    
-    document.body.appendChild(notification);
-    
-    // Remove notification after 5 seconds
+    // Simulate API call
     setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease-out';
-        setTimeout(() => notification.remove(), 300);
-    }, 5000);
+        btn.innerHTML = originalContent;
+        btn.disabled = false;
+        successMsg.classList.remove('hidden');
+        successMsg.classList.add('success-animation');
+        document.getElementById('contactForm').reset();
+        
+        setTimeout(() => {
+            successMsg.classList.add('hidden');
+        }, 5000);
+    }, 1500);
 }
 
-// Add notification animations
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn {
-        from {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-    
-    @keyframes slideOut {
-        from {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        to {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-    }
-`;
-document.head.appendChild(style);
-
-// ===== Parallax Effect for Hero Section =====
-window.addEventListener('scroll', () => {
-    const scrolled = window.pageYOffset;
-    const heroBackground = document.querySelector('.hero-bg-image');
-    
-    if (heroBackground && scrolled < window.innerHeight) {
-        heroBackground.style.transform = `translateY(${scrolled * 0.5}px)`;
-    }
-});
-
-// ===== Image Lazy Loading Animation =====
-const images = document.querySelectorAll('img');
-const imageObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            const img = entry.target;
-            img.style.opacity = '0';
-            img.style.transition = 'opacity 0.6s ease';
-            
-            img.onload = () => {
-                img.style.opacity = '1';
-            };
-            
-            // If image already loaded
-            if (img.complete) {
-                img.style.opacity = '1';
-            }
-            
-            imageObserver.unobserve(img);
-        }
-    });
-}, { threshold: 0.1 });
-
-images.forEach(img => {
-    imageObserver.observe(img);
-});
-
-// ===== Service "Learn More" Button Handlers =====
-const serviceButtons = document.querySelectorAll('.btn-outline-small');
-serviceButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        const serviceName = button.closest('.service-content').querySelector('h3').textContent;
-        showNotification(`Learn more about ${serviceName}. Redirecting to details page...`, 'success');
+// Copy to clipboard function
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        // Show temporary tooltip
+        const tooltip = document.createElement('div');
+        tooltip.textContent = 'Copied!';
+        tooltip.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 text-sm font-medium';
+        document.body.appendChild(tooltip);
         
-        // Scroll to contact section
         setTimeout(() => {
-            document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
-        }, 1500);
+            tooltip.remove();
+        }, 2000);
     });
-});
+}
 
-// ===== Form Input Animations =====
-const formInputs = document.querySelectorAll('.form-group input, .form-group textarea, .form-group select');
-formInputs.forEach(input => {
-    input.addEventListener('focus', () => {
-        input.parentElement.style.transform = 'translateY(-2px)';
-        input.parentElement.style.transition = 'transform 0.3s ease';
+// WebGL Background
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+
+let width, height;
+let particles = [];
+
+function resize() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+}
+
+class Particle {
+    constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = (Math.random() - 0.5) * 0.5;
+        this.size = Math.random() * 2;
+        this.opacity = Math.random() * 0.5;
+    }
+    
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        
+        if (this.x < 0 || this.x > width) this.vx *= -1;
+        if (this.y < 0 || this.y > height) this.vy *= -1;
+    }
+    
+    draw() {
+        ctx.fillStyle = `rgba(99, 102, 241, ${this.opacity})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function initParticles() {
+    particles = [];
+    for (let i = 0; i < 50; i++) {
+        particles.push(new Particle());
+    }
+}
+
+function animateParticles() {
+    ctx.clearRect(0, 0, width, height);
+    
+    particles.forEach(p => {
+        p.update();
+        p.draw();
     });
     
-    input.addEventListener('blur', () => {
-        input.parentElement.style.transform = 'translateY(0)';
-    });
-});
-
-// ===== Hover Effects for Feature Cards =====
-featureCards.forEach(card => {
-    card.addEventListener('mouseenter', () => {
-        const img = card.querySelector('img');
-        if (img) {
-            img.style.transform = 'scale(1.1)';
-            img.style.transition = 'transform 0.3s ease';
-        }
+    // Draw connections
+    particles.forEach((p1, i) => {
+        particles.slice(i + 1).forEach(p2 => {
+            const dx = p1.x - p2.x;
+            const dy = p1.y - p2.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            if (dist < 150) {
+                ctx.strokeStyle = `rgba(99, 102, 241, ${0.1 * (1 - dist/150)})`;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.stroke();
+            }
+        });
     });
     
-    card.addEventListener('mouseleave', () => {
-        const img = card.querySelector('img');
-        if (img) {
-            img.style.transform = 'scale(1)';
-        }
-    });
+    requestAnimationFrame(animateParticles);
+}
+
+window.addEventListener('resize', resize);
+resize();
+initParticles();
+animateParticles();
+
+// 3D Hero Effect with Three.js
+const heroCanvas = document.getElementById('hero-canvas');
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ canvas: heroCanvas, alpha: true, antialias: true });
+
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+
+// Create floating geometry
+const geometry = new THREE.IcosahedronGeometry(1, 0);
+const material = new THREE.MeshBasicMaterial({ 
+    color: 0x6366f1, 
+    wireframe: true,
+    transparent: true,
+    opacity: 0.3
 });
 
-// ===== Loading Animation =====
-window.addEventListener('load', () => {
-    document.body.style.opacity = '0';
-    document.body.style.transition = 'opacity 0.5s ease';
+const sphere = new THREE.Mesh(geometry, material);
+scene.add(sphere);
+
+const particles2 = new THREE.Group();
+for (let i = 0; i < 20; i++) {
+    const mesh = new THREE.Mesh(
+        new THREE.SphereGeometry(0.05, 8, 8),
+        new THREE.MeshBasicMaterial({ color: 0xec4899, transparent: true, opacity: 0.6 })
+    );
+    mesh.position.set(
+        (Math.random() - 0.5) * 10,
+        (Math.random() - 0.5) * 10,
+        (Math.random() - 0.5) * 5
+    );
+    particles2.add(mesh);
+}
+scene.add(particles2);
+
+camera.position.z = 5;
+
+let mouseX = 0;
+let mouseY = 0;
+
+document.addEventListener('mousemove', (e) => {
+    mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+    mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+});
+
+function animate3D() {
+    requestAnimationFrame(animate3D);
     
-    setTimeout(() => {
-        document.body.style.opacity = '1';
-    }, 100);
+    sphere.rotation.x += 0.001;
+    sphere.rotation.y += 0.002;
+    
+    sphere.position.x = mouseX * 0.5;
+    sphere.position.y = mouseY * 0.5;
+    
+    particles2.rotation.y += 0.001;
+    
+    renderer.render(scene, camera);
+}
+
+animate3D();
+
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// ===== Console Welcome Message =====
-console.log('%c🚀 Cores Assist - Customer Support Solutions', 'color: #2563eb; font-size: 20px; font-weight: bold;');
-console.log('%cWebsite loaded successfully!', 'color: #10b981; font-size: 14px;');
-console.log('%cFor inquiries, contact: hello@coresassist.com', 'color: #64748b; font-size: 12px;');
-
-// ===== Scroll to Top on Page Load =====
-window.addEventListener('load', () => {
-    window.scrollTo(0, 0);
+// Magnetic button effect
+document.querySelectorAll('.magnetic-btn').forEach(btn => {
+    btn.addEventListener('mousemove', (e) => {
+        const rect = btn.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        
+        btn.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
+    });
+    
+    btn.addEventListener('mouseleave', () => {
+        btn.style.transform = 'translate(0, 0)';
+    });
 });

@@ -1,524 +1,739 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description"
-        content="Cores Assist - Reliable, scalable customer support solutions for businesses. 24/7 support, live chat, call center services." />
-    <meta name="keywords" content="customer support, call center, live chat, email support, 24/7 customer care" />
-    <title>Cores Assist - Professional Customer Support Solutions</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cores Assist - Premium Customer Support Solutions</title>
     <link rel="icon" type="image/png" href="favicon_io/favicon-32x32.png" />
-    <link rel="stylesheet" href="styles.css" />
+
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="./styles.css">
 </head>
 
-<body>
-    <!-- Navigation -->
-    <nav class="navbar" id="navbar">
-        <div class="container nav-container">
-            <div class="logo">
-                <!-- <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="40" height="40" rx="8" fill="url(#gradient)" />
-                    <path
-                        d="M20 10C14.477 10 10 14.477 10 20C10 25.523 14.477 30 20 30C25.523 30 30 25.523 30 20C30 14.477 25.523 10 20 10ZM20 13C21.657 13 23 14.343 23 16C23 17.657 21.657 19 20 19C18.343 19 17 17.657 17 16C17 14.343 18.343 13 20 13ZM20 27.2C17.5 27.2 15.29 25.92 14 24C14.03 21.99 18 20.9 20 20.9C21.99 20.9 25.97 21.99 26 24C24.71 25.92 22.5 27.2 20 27.2Z"
-                        fill="white" />
-                    <defs>
-                        <linearGradient id="gradient" x1="0" y1="0" x2="40" y2="40">
-                            <stop offset="0%" stop-color="#667eea" />
-                            <stop offset="100%" stop-color="#764ba2" />
-                        </linearGradient>
-                    </defs>
-                </svg> -->
-                <img src="log.png" alt="Cores Assist Logo" class="logo-icon" />
+<body class="antialiased">
 
-                <span>Cores Assist</span>
+    <!-- WebGL Background -->
+    <canvas id="bg-canvas" class="bg-mesh"></canvas>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 top-0 transition-all duration-300" id="navbar">
+        <div class="glass-strong mx-4 mt-4 rounded-full px-6 py-4 max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div
+                    class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center">
+                    <!-- <span class="font-bold text-xl">C</span> -->
+                    <img src="log.png" alt="Cores Assist Logo" class="logo-icon" />
+                </div>
+                <span class="font-display font-bold text-2xl tracking-tight">Cores Assist</span>
             </div>
-            <ul class="nav-menu" id="navMenu">
-                <li><a href="#home" class="nav-link">Home</a></li>
-                <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="#services" class="nav-link">Services</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
-            </ul>
-            <button class="cta-button" onclick="
-            document
-              .getElementById('contact')
-              .scrollIntoView({ behavior: 'smooth' })
-          ">
-                Get In Touch
+
+            <div class="hidden md:flex gap-8 items-center">
+                <a href="#services" class="text-sm font-medium hover:text-indigo-400 transition-colors">Services</a>
+                <a href="#about" class="text-sm font-medium hover:text-indigo-400 transition-colors">About</a>
+                <a href="#features" class="text-sm font-medium hover:text-indigo-400 transition-colors">Features</a>
+                <a href="#contact"
+                    class="magnetic-btn px-6 py-2 rounded-full bg-gradient-to-r from-indigo-600 to-pink-600 text-white font-medium text-sm">Get
+                    Started</a>
+            </div>
+
+            <button class="md:hidden text-white" onclick="toggleMenu()">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
             </button>
-            <div class="hamburger" id="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
         </div>
     </nav>
 
-    <!-- Hero Section (Home) -->
-    <section id="home" class="hero">
-        <div class="hero-background">
-            <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=1600&q=80" alt="Team collaboration"
-                class="hero-bg-image" />
-            <div class="hero-overlay"></div>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu"
+        class="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl transform translate-x-full transition-transform duration-300 md:hidden">
+        <div class="flex flex-col items-center justify-center h-full gap-8">
+            <a href="#services" class="text-2xl font-display" onclick="toggleMenu()">Services</a>
+            <a href="#about" class="text-2xl font-display" onclick="toggleMenu()">About</a>
+            <a href="#features" class="text-2xl font-display" onclick="toggleMenu()">Features</a>
+            <a href="#contact" class="text-2xl font-display text-indigo-400" onclick="toggleMenu()">Get Started</a>
         </div>
-        <div class="container hero-content">
-            <div class="hero-text">
-                <h1 class="fade-in">Transform Your Customer Experience</h1>
-                <p class="fade-in-delay">
-                    Professional customer support solutions that scale with your
-                    business. Available 24/7, 365 days a year.
-                </p>
-                <div class="hero-buttons fade-in-delay-2">
-                    <button class="btn-primary" onclick="
-                document
-                  .getElementById('contact')
-                  .scrollIntoView({ behavior: 'smooth' })
-              ">
-                        Contact Us
-                    </button>
-                    <button class="btn-secondary" onclick="
-                document
-                  .getElementById('about')
-                  .scrollIntoView({ behavior: 'smooth' })
-              ">
-                        Learn More
-                    </button>
-                </div>
-                <!-- <div class="hero-stats fade-in-delay-3">
-                    <div class="stat">
-                        <h3 class="counter" data-target="500">0</h3>
-                        <p>Happy Clients</p>
-                    </div>
-                    <div class="stat">
-                        <h3><span class="counter" data-target="99">0</span>%</h3>
-                        <p>Satisfaction Rate</p>
-                    </div>
-                    <div class="stat">
-                        <h3><span class="counter" data-target="24">0</span>/7</h3>
-                        <p>Support Available</p>
-                    </div>
-                </div> -->
-            </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+        <div id="hero-canvas-container" class="absolute inset-0">
+            <canvas id="hero-canvas"></canvas>
         </div>
-        <div class="scroll-indicator">
-            <div class="mouse"></div>
-        </div>
-    </section>
 
-    <!-- About Section -->
-    <section id="about" class="about">
-        <div class="container">
-            <div class="about-content">
-                <div class="about-image">
-                    <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80"
-                        alt="Professional team meeting" class="main-image" />
-                    <div class="image-decoration"></div>
-                </div>
-                <div class="about-text">
-                    <div class="section-label">About Us</div>
-                    <h2>Empowering Businesses Through Exceptional Support</h2>
-                    <p class="lead">
-                        At Cores Assist, we believe that outstanding customer support is
-                        the cornerstone of business success. Since our founding, we've
-                        helped hundreds of companies transform their customer experience.
-                    </p>
-                    <p>
-                        We specialize in providing scalable, reliable customer support
-                        solutions tailored to your business needs. Our team of trained
-                        professionals works around the clock to ensure your customers
-                        receive the attention they deserve.
-                    </p>
-
-                    <div class="about-features">
-                        <div class="about-feature">
-                            <div class="feature-icon-small">🎯</div>
-                            <div>
-                                <h4>Our Mission</h4>
-                                <p>
-                                    To deliver world-class customer support that helps
-                                    businesses grow and customers thrive.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="about-feature">
-                            <div class="feature-icon-small">💡</div>
-                            <div>
-                                <h4>Our Vision</h4>
-                                <p>
-                                    To be the most trusted partner for customer support
-                                    solutions globally.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- <div class="about-stats-row">
-                        <div class="about-stat">
-                            <h3>10+</h3>
-                            <p>Years Experience</p>
-                        </div>
-                        <div class="about-stat">
-                            <h3>50+</h3>
-                            <p>Expert Agents</p>
-                        </div>
-                        <div class="about-stat">
-                            <h3>15+</h3>
-                            <p>Industries Served</p>
-                        </div>
-                    </div> -->
-                </div>
+        <div class="relative z-10 max-w-7xl mx-auto px-6 text-center">
+            <div class="inline-block mb-6 px-4 py-2 rounded-full glass border border-indigo-500/30 float">
+                <span class="text-indigo-300 text-sm font-medium">🚀 Next-Gen Customer Support</span>
             </div>
 
-            <!-- Why Choose Us -->
-            <div class="why-choose-us">
-                <div class="section-header">
-                    <h2>Why Choose Cores Assist?</h2>
-                    <p>We deliver excellence through innovation and dedication</p>
+            <h1 class="font-display font-bold text-5xl md:text-7xl lg:text-8xl leading-tight mb-6 reveal-text">
+                We Handle Your <br />
+                <span class="gradient-text">Customer Dreams</span>
+            </h1>
+
+            <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 reveal-text leading-relaxed">
+                Premium 24/7 customer support solutions that transform frustrated users into loyal advocates. Experience
+                the future of customer care.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center reveal-text">
+                <!-- <button
+                    class="magnetic-btn px-8 py-4 rounded-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white font-semibold text-lg pulse-glow hover:scale-105 transition-transform">
+                    Start Free Trial
+                </button>
+                <button
+                    class="magnetic-btn px-8 py-4 rounded-full glass text-white font-semibold text-lg hover:bg-white/10 transition-all flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Watch Demo
+                </button> -->
+                <button
+                    class="magnetic-btn px-8 py-4 rounded-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white font-semibold text-lg pulse-glow hover:scale-105 transition-transform"
+                    onclick="document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })">
+                    Get In Touch
+                </button>
+            </div>
+
+            <!-- Stats -->
+            <div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto reveal-text">
+                <div class="glass rounded-2xl p-6 hover-card">
+                    <div class="text-3xl font-bold gradient-text">30+%</div>
+                    <div class="text-sm text-gray-400 mt-1">Customer Growth</div>
                 </div>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&q=80"
-                            alt="Scalable solutions" />
-                        <div class="feature-content">
-                            <h3>Scalable Solutions</h3>
-                            <p>
-                                Grow your support team as your business expands without the
-                                overhead costs of hiring and training.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="feature-card">
-                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80"
-                            alt="Real-time analytics" />
-                        <div class="feature-content">
-                            <h3>Real-Time Analytics</h3>
-                            <p>
-                                Track performance metrics and customer satisfaction with our
-                                advanced reporting dashboard.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="feature-card">
-                        <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&q=80"
-                            alt="Expert team" />
-                        <div class="feature-content">
-                            <h3>Expert Team</h3>
-                            <p>
-                                Highly trained support specialists with industry expertise and
-                                professional certifications.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="feature-card">
-                        <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=600&q=80"
-                            alt="Cost effective" />
-                        <div class="feature-content">
-                            <h3>Cost-Effective</h3>
-                            <p>
-                                Reduce operational costs by up to 60% compared to maintaining
-                                in-house support teams.
-                            </p>
-                        </div>
-                    </div>
+                <div class="glass rounded-2xl p-6 hover-card">
+                    <div class="text-3xl font-bold gradient-text">24/7</div>
+                    <div class="text-sm text-gray-400 mt-1">Support</div>
+                </div>
+                <div class="glass rounded-2xl p-6 hover-card">
+                    <div class="text-3xl font-bold gradient-text">500+</div>
+                    <div class="text-sm text-gray-400 mt-1">Companies</div>
+                </div>
+                <div class="glass rounded-2xl p-6 hover-card">
+                    <div class="text-3xl font-bold gradient-text">90+%</div>
+                    <div class="text-sm text-gray-400 mt-1">Satisfaction</div>
                 </div>
             </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <svg class="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
         </div>
     </section>
 
     <!-- Services Section -->
-    <section id="services" class="services">
-        <div class="container">
-            <div class="section-header">
-                <div class="section-label">Our Services</div>
-                <h2>Comprehensive Support Solutions</h2>
-                <p>
-                    Professional customer support services tailored to your business
-                    needs
-                </p>
+    <section id="services" class="py-32 relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-20">
+                <h2 class="font-display text-4xl md:text-6xl font-bold mb-6 reveal-text">Our <span
+                        class="gradient-text">Ecosystem</span></h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto reveal-text">Comprehensive support solutions designed
+                    for modern businesses</p>
             </div>
 
-            <div class="services-showcase">
-                <!-- Service 1 -->
-                <div class="service-item">
-                    <div class="service-image">
-                        <img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&q=80"
-                            alt="Call center support" />
-                        <div class="service-overlay">
-                            <span class="service-number">01</span>
-                        </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="group relative reveal-text">
+                    <div
+                        class="absolute -inset-1 bg-gradient-to-r from-indigo-600 to-pink-600 rounded-3xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200">
                     </div>
-                    <div class="service-content">
-                        <div class="service-icon">📞</div>
-                        <h3>Call Center Support</h3>
-                        <p>
-                            Professional inbound and outbound call handling with trained
-                            agents ready to represent your brand with excellence.
-                        </p>
-                        <ul class="service-features">
-                            <li>✓ Inbound & Outbound Calls</li>
-                            <li>✓ Multilingual Support Available</li>
-                            <li>✓ Quality Monitoring & Recording</li>
-                            <li>✓ CRM Integration</li>
+                    <div class="relative glass-strong rounded-3xl p-8 h-full hover-card overflow-hidden">
+                        <div
+                            class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 rounded-full blur-3xl transform translate-x-16 -translate-y-16">
+                        </div>
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center mb-6">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-display text-2xl font-bold mb-4">Live Chat Support</h3>
+                        <p class="text-gray-400 leading-relaxed mb-6">Real-time customer engagement with AI-powered
+                            chatbots and human agents working in perfect harmony.</p>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Instant responses
+                            </li>
+                            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Multi-language
+                                support</li>
+                            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Smart routing</li>
                         </ul>
-                        <button class="btn-primary" onclick="
-                  document
-                    .getElementById('contact')
-                    .scrollIntoView({ behavior: 'smooth' })
-                ">
-                            Learn More
-                        </button>
                     </div>
                 </div>
 
-                <!-- Service 2 -->
-                <div class="service-item reverse">
-                    <div class="service-image">
-                        <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&q=80"
-                            alt="Live chat support" />
-                        <div class="service-overlay">
-                            <span class="service-number">02</span>
-                        </div>
+                <!-- Card 2 -->
+                <div class="group relative reveal-text" style="animation-delay: 0.2s">
+                    <div
+                        class="absolute -inset-1 bg-gradient-to-r from-pink-600 to-purple-600 rounded-3xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200">
                     </div>
-                    <div class="service-content">
-                        <div class="service-icon">💬</div>
-                        <h3>Live Chat Support</h3>
-                        <p>
-                            Real-time chat support that engages customers instantly and
-                            resolves issues efficiently on your website or app.
-                        </p>
-                        <ul class="service-features">
-                            <li>✓ Instant Response Times</li>
-                            <li>✓ AI-Powered Routing</li>
-                            <li>✓ Chat Analytics & Insights</li>
-                            <li>✓ Proactive Chat Triggers</li>
+                    <div class="relative glass-strong rounded-3xl p-8 h-full hover-card overflow-hidden">
+                        <div
+                            class="absolute top-0 right-0 w-32 h-32 bg-pink-500/20 rounded-full blur-3xl transform translate-x-16 -translate-y-16">
+                        </div>
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center mb-6">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-display text-2xl font-bold mb-4">Email Management</h3>
+                        <p class="text-gray-400 leading-relaxed mb-6">Transform your email support into a streamlined
+                            ticketing system with automated categorization and prioritization.</p>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> SLA management
+                            </li>
+                            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Auto-tagging</li>
+                            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Analytics
+                                dashboard</li>
                         </ul>
-                        <button class="btn-primary" onclick="
-                  document
-                    .getElementById('contact')
-                    .scrollIntoView({ behavior: 'smooth' })
-                ">
-                            Learn More
-                        </button>
                     </div>
                 </div>
 
-                <!-- Service 3 -->
-                <div class="service-item">
-                    <div class="service-image">
-                        <img src="https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=800&q=80"
-                            alt="Email support" />
-                        <div class="service-overlay">
-                            <span class="service-number">03</span>
-                        </div>
+                <!-- Card 3 -->
+                <div class="group relative reveal-text" style="animation-delay: 0.4s">
+                    <div
+                        class="absolute -inset-1 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-3xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200">
                     </div>
-                    <div class="service-content">
-                        <div class="service-icon">✉️</div>
-                        <h3>Email Support</h3>
-                        <p>
-                            Efficient email management with fast response times and
-                            professional, personalized communication for every customer.
-                        </p>
-                        <ul class="service-features">
-                            <li>✓ < 2 Hour Response Time</li>
-                            <li>✓ Advanced Ticket Management</li>
-                            <li>✓ Customizable Templates</li>
-                            <li>✓ Priority Queue System</li>
+                    <div class="relative glass-strong rounded-3xl p-8 h-full hover-card overflow-hidden">
+                        <div
+                            class="absolute top-0 right-0 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl transform translate-x-16 -translate-y-16">
+                        </div>
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center mb-6">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-display text-2xl font-bold mb-4">Voice Support</h3>
+                        <p class="text-gray-400 leading-relaxed mb-6">Professional call center services with advanced
+                            IVR systems and highly trained support representatives.</p>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Toll-free numbers
+                            </li>
+                            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Call recording
+                            </li>
+                            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Quality assurance
+                            </li>
                         </ul>
-                        <button class="btn-primary" onclick="
-                  document
-                    .getElementById('contact')
-                    .scrollIntoView({ behavior: 'smooth' })
-                ">
-                            Learn More
-                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-32 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-indigo-900/20 to-transparent"></div>
+
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="reveal-text">
+                    <h2 class="font-display text-4xl md:text-5xl font-bold mb-6">Intelligent <span
+                            class="gradient-text">Automation</span></h2>
+                    <p class="text-gray-400 text-lg mb-8 leading-relaxed">
+                        Our AI-driven platform learns from every interaction, continuously improving response quality
+                        while reducing resolution times by up to 60%.
+                    </p>
+
+                    <div class="space-y-6">
+                        <div class="flex gap-4 items-start group">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xl mb-2">Lightning Fast</h4>
+                                <p class="text-gray-400">Sub-second response times with global CDN distribution</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4 items-start group">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-pink-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xl mb-2">Bank-Grade Security</h4>
+                                <p class="text-gray-400">SOC 2 Type II compliant with end-to-end encryption</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4 items-start group">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xl mb-2">99.9% Accuracy</h4>
+                                <p class="text-gray-400">Machine learning models trained on millions of support tickets
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Service 4 -->
-                <div class="service-item reverse">
-                    <div class="service-image">
-                        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80"
-                            alt="24/7 support" />
-                        <div class="service-overlay">
-                            <span class="service-number">04</span>
+                <div class="relative reveal-text">
+                    <div
+                        class="absolute -inset-4 bg-gradient-to-r from-indigo-500 to-pink-500 rounded-3xl opacity-30 blur-2xl">
+                    </div>
+                    <div class="relative glass-strong rounded-3xl p-2 overflow-hidden">
+                        <div class="bg-gray-900 rounded-2xl p-6 space-y-4">
+                            <!-- Simulated Chat Interface -->
+                            <div class="flex items-center gap-3 border-b border-gray-800 pb-4">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                <span class="ml-4 text-sm text-gray-400">Cores Assist Dashboard</span>
+                            </div>
+
+                            <div class="space-y-3">
+                                <div class="flex gap-3">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-xs font-bold">
+                                        CA</div>
+                                    <div class="bg-gray-800 rounded-2xl rounded-tl-none px-4 py-3 max-w-[80%]">
+                                        <p class="text-sm">Hello! How can I help you today?</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex gap-3 justify-end">
+                                    <div class="bg-indigo-600 rounded-2xl rounded-tr-none px-4 py-3 max-w-[80%]">
+                                        <p class="text-sm">I need help with my recent order #12345</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex gap-3">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-xs font-bold">
+                                        CA</div>
+                                    <div class="bg-gray-800 rounded-2xl rounded-tl-none px-4 py-3 max-w-[80%]">
+                                        <p class="text-sm">I'll check that for you right away. One moment please...</p>
+                                        <div class="flex gap-1 mt-2">
+                                            <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
+                                            <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
+                                                style="animation-delay: 0.1s"></div>
+                                            <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
+                                                style="animation-delay: 0.2s"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="glass rounded-xl p-3 mt-4">
+                                    <div class="flex justify-between items-center text-xs text-gray-400 mb-2">
+                                        <span>Resolution Time</span>
+                                        <span class="text-green-400">42 seconds</span>
+                                    </div>
+                                    <div class="h-2 bg-gray-800 rounded-full overflow-hidden">
+                                        <div
+                                            class="h-full bg-gradient-to-r from-indigo-500 to-pink-500 w-3/4 rounded-full">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="service-content">
-                        <div class="service-icon">🌙</div>
-                        <h3>24/7 Customer Care</h3>
-                        <p>
-                            Round-the-clock support ensuring your customers are never left
-                            waiting, no matter the time zone or holiday.
-                        </p>
-                        <ul class="service-features">
-                            <li>✓ Always Available Support</li>
-                            <li>✓ Global Coverage</li>
-                            <li>✓ Holiday & Weekend Support</li>
-                            <li>✓ Emergency Escalation</li>
-                        </ul>
-                        <button class="btn-primary" onclick="
-                  document
-                    .getElementById('contact')
-                    .scrollIntoView({ behavior: 'smooth' })
-                ">
-                            Learn More
-                        </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="py-32 relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-20 reveal-text">
+                <h2 class="font-display text-4xl md:text-6xl font-bold mb-6">Simple <span
+                        class="gradient-text">Pricing</span></h2>
+                <p class="text-gray-400 text-lg">Scale your support without breaking the bank</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Basic -->
+                <div class="glass rounded-3xl p-8 hover-card reveal-text border border-gray-800">
+                    <h3 class="font-display text-xl font-bold mb-2">Starter</h3>
+                    <div class="text-4xl font-bold mb-6">$49<span class="text-lg text-gray-400 font-normal">/mo</span>
                     </div>
+                    <ul class="space-y-4 mb-8 text-gray-300">
+                        <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-400" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg> 500 tickets/mo</li>
+                        <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-400" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg> Email support</li>
+                        <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-400" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg> Basic analytics</li>
+                        <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-400" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg> 9-5 support</li>
+                    </ul>
+                    <button
+                        class="w-full py-3 rounded-full border border-gray-600 hover:border-white transition-colors font-medium">Get
+                        Started</button>
+                </div>
+
+                <!-- Pro (Featured) -->
+                <div class="relative reveal-text" style="animation-delay: 0.1s">
+                    <div
+                        class="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-pink-500 rounded-3xl blur opacity-75">
+                    </div>
+                    <div class="relative glass-strong rounded-3xl p-8 hover-card border border-indigo-500/50">
+                        <div
+                            class="absolute top-0 right-0 bg-gradient-to-r from-indigo-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-bl-xl rounded-tr-xl">
+                            POPULAR</div>
+                        <h3 class="font-display text-xl font-bold mb-2">Professional</h3>
+                        <div class="text-4xl font-bold mb-6 gradient-text">$149<span
+                                class="text-lg text-gray-400 font-normal">/mo</span></div>
+                        <ul class="space-y-4 mb-8 text-gray-300">
+                            <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-400" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7" />
+                                </svg> Unlimited tickets</li>
+                            <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-400" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7" />
+                                </svg> Live chat + Voice</li>
+                            <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-400" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7" />
+                                </svg> Advanced AI features</li>
+                            <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-400" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7" />
+                                </svg> 24/7 support</li>
+                            <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-400" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7" />
+                                </svg> Custom integrations</li>
+                        </ul>
+                        <button
+                            class="w-full py-3 rounded-full bg-gradient-to-r from-indigo-600 to-pink-600 text-white font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all">Get
+                            Started</button>
+                    </div>
+                </div>
+
+                <!-- Enterprise -->
+                <div class="glass rounded-3xl p-8 hover-card reveal-text border border-gray-800"
+                    style="animation-delay: 0.2s">
+                    <h3 class="font-display text-xl font-bold mb-2">Enterprise</h3>
+                    <div class="text-4xl font-bold mb-6">Custom</div>
+                    <ul class="space-y-4 mb-8 text-gray-300">
+                        <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-400" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg> Dedicated team</li>
+                        <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-400" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg> SLA guarantees</li>
+                        <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-400" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg> White-label options</li>
+                        <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-400" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg> Account manager</li>
+                    </ul>
+                    <button
+                        class="w-full py-3 rounded-full border border-gray-600 hover:border-white transition-colors font-medium">Contact
+                        Sales</button>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="contact">
-        <div class="container">
-            <div class="contact-content">
-                <div class="contact-info">
-                    <div class="section-label">Get In Touch</div>
-                    <h2>Let's Start Your Success Story</h2>
-                    <p>
-                        Ready to transform your customer support? Get in touch with us
-                        today and discover how Cores Assist can help your business grow.
-                    </p>
+    <section id="contact" class="py-32 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-900/10 to-transparent"></div>
 
-                    <div class="contact-image">
-                        <img src="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=800&q=80"
-                            alt="Contact us" />
+        <!-- Decorative Elements -->
+        <div class="absolute top-20 left-0 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-20 right-0 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl"></div>
+
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="text-center mb-20">
+                <div class="inline-block mb-4 px-4 py-2 rounded-full glass border border-indigo-500/30 reveal-text">
+                    <span class="text-indigo-300 text-sm font-medium">Let's Connect</span>
+                </div>
+                <h2 class="font-display text-4xl md:text-6xl font-bold mb-6 reveal-text">Get in <span
+                        class="gradient-text">Touch</span></h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto reveal-text">Ready to elevate your customer support?
+                    We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+            </div>
+
+            <div class="grid lg:grid-cols-5 gap-12 items-start">
+                <!-- Contact Info Cards -->
+                <div class="lg:col-span-2 space-y-6 reveal-text">
+                    <!-- Email Card -->
+                    <div class="glass rounded-2xl p-6 hover-card group cursor-pointer"
+                        onclick="copyToClipboard('contact@coresassist.com')">
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="font-bold text-lg mb-1">Email Us</h3>
+                                <p class="text-gray-400 text-sm mb-2">For general inquiries and support</p>
+                                <p class="text-indigo-400 font-medium">contact@coresassist.com</p>
+                                <p
+                                    class="text-xs text-green-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    Click to copy</p>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="contact-details">
-                        <div class="contact-item">
-                            <div class="contact-icon">📧</div>
-                            <div>
-                                <h4>Email</h4>
-                                <p>contact@coresassist.com</p>
+                    <!-- Phone Card -->
+                    <div class="glass rounded-2xl p-6 hover-card group">
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="font-bold text-lg mb-1">Call Us</h3>
+                                <p class="text-gray-400 text-sm mb-2">Mon-Fri from 8am to 5pm</p>
+                                <p class="text-pink-400 font-medium">+1 (510) 880-8800</p>
                             </div>
                         </div>
-                        <div class="contact-item">
-                            <div class="contact-icon">📞</div>
-                            <div>
-                                <h4>Phone</h4>
-                                <p>+1 (510) 880-8800</p>
+                    </div>
+
+                    <!-- Office Card -->
+                    <div class="glass rounded-2xl p-6 hover-card group">
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="font-bold text-lg mb-1">Visit Us</h3>
+                                <p class="text-gray-400 text-sm mb-2">Come say hello at our HQ</p>
+                                <p class="text-purple-400 font-medium">100 Support Street<br>San Francisco, CA 94107</p>
                             </div>
                         </div>
-                        <div class="contact-item">
-                            <div class="contact-icon">🌍</div>
-                            <div>
-                                <h4>Address</h4>
-                                <p>123 Business Ave, Suite 100<br />New York, NY 10001</p>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <div class="contact-icon">⏰</div>
-                            <div>
-                                <h4>Business Hours</h4>
-                                <p>24/7 - We're Always Here</p>
-                            </div>
+                    </div>
+
+                    <!-- Social Links -->
+                    <div class="glass rounded-2xl p-6">
+                        <h3 class="font-bold text-lg mb-4">Follow Us</h3>
+                        <div class="flex gap-4">
+                            <a href="#"
+                                class="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-indigo-500/20 hover:border-indigo-500/50 transition-all border border-transparent">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
+                                </svg>
+                            </a>
+                            <a href="#"
+                                class="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-pink-500/20 hover:border-pink-500/50 transition-all border border-transparent">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                                </svg>
+                            </a>
+                            <a href="#"
+                                class="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-blue-500/20 hover:border-blue-500/50 transition-all border border-transparent">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                                </svg>
+                            </a>
                         </div>
                     </div>
                 </div>
-                <div class="contact-form-wrapper">
-                    <form class="contact-form" id="contactForm" action="https://formspree.io/f/xnjvqzgj" method="POST">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <input type="text" id="name" required />
-                                <label for="name">Full Name</label>
-                            </div>
-                            <div class="form-group">
-                                <input type="email" id="email" required />
-                                <label for="email">Email Address</label>
-                            </div>
+
+                <!-- Contact Form -->
+                <div class="lg:col-span-3 reveal-text">
+                    <div class="relative group">
+                        <div
+                            class="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-3xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200">
                         </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <input type="tel" id="phone" required />
-                                <label for="phone">Phone Number</label>
-                            </div>
-                            <div class="form-group">
-                                <input type="text" id="company" required />
-                                <label for="company">Company Name</label>
-                            </div>
+                        <div class="relative glass-strong rounded-3xl p-8 md:p-10">
+                            <form id="contactForm" class="space-y-6" action="https://formspree.io/f/xnjvqzgj" method="POST" onsubmit="handleSubmit(event)">
+                                <div class="grid md:grid-cols-2 gap-6">
+                                    <div class="space-y-2">
+                                        <label class="text-sm font-medium text-gray-300 ml-1">First Name</label>
+                                        <input type="text" required
+                                            class="w-full px-4 py-3 rounded-xl glass-input text-white placeholder-gray-500 focus:placeholder-gray-400 transition-all"
+                                            placeholder="John">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-sm font-medium text-gray-300 ml-1">Last Name</label>
+                                        <input type="text" required
+                                            class="w-full px-4 py-3 rounded-xl glass-input text-white placeholder-gray-500 focus:placeholder-gray-400 transition-all"
+                                            placeholder="Doe">
+                                    </div>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="text-sm font-medium text-gray-300 ml-1">Email Address</label>
+                                    <input type="email" required
+                                        class="w-full px-4 py-3 rounded-xl glass-input text-white placeholder-gray-500 focus:placeholder-gray-400 transition-all"
+                                        placeholder="john@company.com">
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="text-sm font-medium text-gray-300 ml-1">Company</label>
+                                    <input type="text"
+                                        class="w-full px-4 py-3 rounded-xl glass-input text-white placeholder-gray-500 focus:placeholder-gray-400 transition-all"
+                                        placeholder="Acme Inc.">
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="text-sm font-medium text-gray-300 ml-1">Message</label>
+                                    <textarea rows="4" required
+                                        class="w-full px-4 py-3 rounded-xl glass-input text-white placeholder-gray-500 focus:placeholder-gray-400 transition-all resize-none"
+                                        placeholder="Tell us about your project and how we can help..."></textarea>
+                                </div>
+
+                                <div class="flex items-start gap-3">
+                                    <input type="checkbox" id="privacy" required
+                                        class="mt-1 w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 bg-transparent">
+                                    <label for="privacy" class="text-sm text-gray-400">I agree to the <a href="#"
+                                            class="text-indigo-400 hover:text-indigo-300 underline">Privacy Policy</a>
+                                        and processing of my personal data.</label>
+                                </div>
+
+                                <button type="submit" id="submitBtn"
+                                    class="w-full py-4 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white font-bold text-lg hover:shadow-lg hover:shadow-indigo-500/25 transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2">
+                                    <span>Send Message</span>
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+                                </button>
+
+                                <!-- Success Message (Hidden by default) -->
+                                <div id="successMessage"
+                                    class="hidden rounded-xl bg-green-500/20 border border-green-500/50 p-4 text-center">
+                                    <div class="flex items-center justify-center gap-2 text-green-400 font-semibold">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        <span>Message sent successfully! We'll get back to you soon.</span>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
-                        <div class="form-group">
-                            <select id="service" required>
-                                <option value="">Select a service</option>
-                                <option value="call-center">Call Center Support</option>
-                                <option value="live-chat">Live Chat Support</option>
-                                <option value="email">Email Support</option>
-                                <option value="24-7">24/7 Customer Care</option>
-                                <option value="custom">Others</option>
-                            </select>
-                            <label for="service">Service Interest</label>
-                        </div>
-                        <div class="form-group">
-                            <textarea id="message" rows="5" required></textarea>
-                            <label for="message">Tell us about your needs</label>
-                        </div>
-                        <button type="submit" class="btn-primary full-width">
-                            Send Message
-                        </button>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <div class="logo">
-                        <img src="log.png" alt="Cores Assist Logo" class="logo-icon" />
+    <!-- CTA Section -->
+    <section class="py-32 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-t from-indigo-900/40 to-transparent"></div>
+        <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
+            <h2 class="font-display text-5xl md:text-7xl font-bold mb-8 reveal-text">Ready to Transform<br />Your <span
+                    class="gradient-text">Customer Experience?</span></h2>
+            <p class="text-xl text-gray-400 mb-12 reveal-text">Join companies already delivering exceptional
+                support with Cores Assist.</p>
 
-                        <span>Cores Assist</span>
-                    </div>
-                    <p>
-                        Professional customer support solutions that help businesses grow
-                        and succeed. Your success is our mission.
-                    </p>
+            <!-- <div class="flex flex-col sm:flex-row gap-4 justify-center reveal-text">
+                <button
+                    class="magnetic-btn px-8 py-4 rounded-full bg-white text-black font-bold text-lg hover:scale-105 transition-transform">
+                    Start Free Trial
+                </button>
+                <button
+                    class="magnetic-btn px-8 py-4 rounded-full glass text-white font-bold text-lg hover:bg-white/10 transition-all">
+                    Schedule a Demo
+                </button>
+            </div> -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-800 py-12 relative">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-2">
+                <div
+                    class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center">
+                    <!-- <span class="font-bold text-sm">C</span> -->
+                    <img src="log.png" alt="Cores Assist Logo" class="logo-icon" />
                 </div>
-                <div class="footer-section">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#about">About Us</a></li>
-                        <li><a href="#services">Services</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Services</h4>
-                    <ul>
-                        <li><a href="#services">Call Center</a></li>
-                        <li><a href="#services">Live Chat</a></li>
-                        <li><a href="#services">Email Support</a></li>
-                        <li><a href="#services">24/7 Care</a></li>
-                    </ul>
-                </div>
+                <span class="font-display font-bold text-xl">Cores Assist</span>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Cores Assist. All rights reserved.</p>
+
+            <div class="text-gray-500 text-sm">
+                © 2026 Cores Assist. All rights reserved.
+            </div>
+
+            <div class="flex gap-6 text-sm text-gray-400">
+                <a href="#" class="hover:text-white transition-colors">Privacy</a>
+                <a href="#" class="hover:text-white transition-colors">Terms</a>
+                <a href="#" class="hover:text-white transition-colors">Cookies</a>
             </div>
         </div>
     </footer>
 
-    <!--Start of Tawk.to Script-->
-    <script type="text/javascript">
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    (function(){
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true;
-    s1.src='https://embed.tawk.to/697e3e224ae1781c35322894/1jgai5dom';
-    s1.charset='UTF-8';
-    s1.setAttribute('crossorigin','*');
-    s0.parentNode.insertBefore(s1,s0);
-    })();
-    </script>
-    <!--End of Tawk.to Script-->
-
-    <script src="script.js"></script>
+    <script src="./script.js"></script>
 </body>
-
 
 </html>
