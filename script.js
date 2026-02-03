@@ -239,3 +239,81 @@ document.querySelectorAll('.magnetic-btn').forEach(btn => {
         btn.style.transform = 'translate(0, 0)';
     });
 });
+
+
+
+// chatbot
+// CHATBOT - Replace YOUR_WORKER_URL with your actual Cloudflare Worker URL
+const CLOUDFLARE_WORKER_URL = 'https://YOUR_WORKER_NAME.YOUR_SUBDOMAIN.workers.dev/chat';
+
+let chatHistory = [];
+let isProcessing = false;
+
+document.getElementById('chatbot-toggle').addEventListener('click', () => {
+    const chatWindow = document.getElementById('chatbot-window');
+    const isActive = chatWindow.classList.toggle('active');
+    document.getElementById('chat-icon').classList.toggle('hidden', isActive);
+    document.getElementById('close-icon').classList.toggle('hidden', !isActive);
+    if (isActive) document.getElementById('chat-input').focus();
+});
+
+function addMessage(content, isUser = false) {
+    const div = document.createElement('div');
+    div.className = 'flex gap-3 animate-fade-in' + (isUser ? ' justify-end' : '');
+    div.innerHTML = isUser ? 
+        `<div class="bg-gradient-to-r from-indigo-600 to-pink-600 rounded-2xl rounded-tr-none px-4 py-3 max-w-[80%]">
+            <p class="text-sm text-white">${content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
+        </div>` :
+        `<div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center flex-shrink-0">
+            <span class="text-xs font-bold text-white">CA</span>
+        </div>
+        <div class="bg-gray-800/80 rounded-2xl rounded-tl-none px-4 py-3 max-w-[80%]">
+            <p class="text-sm text-white">${content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
+        </div>`;
+    
+    const chatMessages = document.getElementById('chat-messages');
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+document.getElementById('chat-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = document.getElementById('chat-input');
+    const message = input.value.trim();
+    if (!message || isProcessing) return;
+    
+    input.value = '';
+    addMessage(message, true);
+    isProcessing = true;
+    document.getElementById('send-button').disabled = true;
+    document.getElementById('typing-indicator').classList.remove('hidden');
+    
+    chatHistory.push({ role: 'user', content: message });
+    
+    try {
+        const res = await fetch(CLOUDFLARE_WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                messages: chatHistory,
+                model: 'llama-3.3-70b-versatile',
+                temperature: 0.7,
+                max_tokens: 1024
+            })
+        });
+        
+        const data = await res.json();
+        const reply = data.choices[0].message.content;
+        chatHistory.push({ role: 'assistant', content: reply });
+        
+        document.getElementById('typing-indicator').classList.add('hidden');
+        addMessage(reply, false);
+    } catch (error) {
+        document.getElementById('typing-indicator').classList.add('hidden');
+        addMessage('Sorry, an error occurred. Please try again.', false);
+        console.error(error);
+    } finally {
+        isProcessing = false;
+        document.getElementById('send-button').disabled = false;
+    }
+});
