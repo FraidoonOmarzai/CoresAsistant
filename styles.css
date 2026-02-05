@@ -197,14 +197,20 @@ body {
 }
 
 @media (max-width: 640px) {
+
     #chatbot-window {
-        height: 100dvh; /* fixes iOS browser chrome issues */
+        bottom: 0;
+        right: 0;
+        left: 0;
     }
 
-    #chat-messages {
-        padding-bottom: 1rem;
+    body {
+        overscroll-behavior: none;
     }
+
 }
+
+
 
 #chatbot-window {
     padding-bottom: env(safe-area-inset-bottom);

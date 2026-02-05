@@ -319,4 +319,11 @@ document.getElementById('chat-form').addEventListener('submit', async (e) => {
 
 });
 
+const input = document.getElementById("chat-input");
+const messages = document.getElementById("chat-messages");
 
+input.addEventListener("focus", () => {
+    setTimeout(() => {
+        messages.scrollTop = messages.scrollHeight;
+    }, 300);
+});
