@@ -195,3 +195,17 @@ body {
     background: rgba(99, 102, 241, 0.5);
     border-radius: 3px;
 }
+
+@media (max-width: 640px) {
+    #chatbot-window {
+        height: 100dvh; /* fixes iOS browser chrome issues */
+    }
+
+    #chat-messages {
+        padding-bottom: 1rem;
+    }
+}
+
+#chatbot-window {
+    padding-bottom: env(safe-area-inset-bottom);
+}
