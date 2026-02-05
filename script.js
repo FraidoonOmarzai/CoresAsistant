@@ -244,7 +244,7 @@ document.querySelectorAll('.magnetic-btn').forEach(btn => {
 
 // chatbot
 // CHATBOT - Replace YOUR_WORKER_URL with your actual Cloudflare Worker URL
-const CLOUDFLARE_WORKER_URL = 'https://YOUR_WORKER_NAME.YOUR_SUBDOMAIN.workers.dev';
+const CLOUDFLARE_WORKER_URL = 'https://chatbot-worker.fraidoonomarzai.workers.dev';
 
 let chatHistory = [];
 let isProcessing = false;
@@ -318,3 +318,4 @@ document.getElementById('chat-form').addEventListener('submit', async (e) => {
     }
 
 });
+
